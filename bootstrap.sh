@@ -12,7 +12,7 @@ if ! command -v docker &> /dev/null; then
     if command -v systemctl &> /dev/null && systemctl list-units --type=service &> /dev/null; then
     sudo systemctl enable --now docker
     else
-    echo "⚠️ systemctl not available. Trying to start Docker manually..."
+    echo "systemctl not available. Trying to start Docker manually..."
     sudo service docker start || sudo dockerd &
     sleep 5
     fi
@@ -27,6 +27,17 @@ if ! command -v docker-compose &> /dev/null; then
 else
   echo "Docker Compose already installed."
 fi
+
+echo "🔍 Checking for OpenSCAP (oscap)..."
+
+if ! command -v oscap &> /dev/null; then
+  echo "Installing OpenSCAP tools..."
+  sudo apt-get update
+  sudo apt-get install -y openscap-scanner openscap-utils
+else
+  echo "OpenSCAP is already installed."
+fi
+
 
 curl -fsSL "$REPO_URL/install.sh" -o install.sh
 curl -fsSL "$REPO_URL/.env.gpg" -o .env.gpg
