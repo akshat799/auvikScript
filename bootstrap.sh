@@ -10,9 +10,9 @@ sudo apt-get install -y \
   wget \
   dpkg \
   unzip \
-  software-properties-common \
-  systemctl \
-  curl
+  curl \
+  software-properties-common
+
 
 echo "Checking Docker installation..."
 if ! command -v docker &> /dev/null; then
