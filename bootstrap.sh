@@ -48,8 +48,10 @@ if ! command -v oscap &> /dev/null; then
     mkdir -p /opt/ssg && cd /opt/ssg
     wget -q https://github.com/ComplianceAsCode/content/releases/latest/download/scap-security-guide.zip
     unzip -q scap-security-guide.zip
+    echo "scap-security-guide downloaded to /opt/ssg."
   else
     sudo apt-get install -y scap-security-guide
+    echo "scap-security-guide installed via package manager."
   fi
 else
   echo "OpenSCAP is already installed."
