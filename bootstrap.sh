@@ -6,7 +6,7 @@ curl -fsSL "$REPO_URL/install.sh" -o install.sh
 curl -fsSL "$REPO_URL/.env.gpg" -o .env.gpg
 
 echo "Decrypting .env..."
-gpg --quiet --batch --yes --decrypt .env.gpg > .env
+gpg --quiet --batch --yes --passphrase "$GPG_PASSPHRASE" --decrypt .env.gpg > .env
 
 set -o allexport
 source .env
