@@ -1,13 +1,23 @@
+#!/bin/bash
 set -e
 
 REPO_URL="https://raw.githubusercontent.com/akshat799/auvikScript/main"
 
+echo "Installing core dependencies..."
+sudo apt-get update
+sudo apt-get install -y \
+  apt-utils \
+  wget \
+  dpkg \
+  unzip \
+  software-properties-common \
+  systemctl \
+  curl
+
 echo "Checking Docker installation..."
 if ! command -v docker &> /dev/null; then
   echo "Docker not found. Installing..."
-  sudo apt-get update
   sudo apt-get install -y docker.io
-
   if command -v systemctl &> /dev/null && systemctl list-units --type=service &> /dev/null; then
     echo "Starting Docker using systemctl..."
     sudo systemctl enable --now docker
@@ -26,6 +36,17 @@ if ! command -v docker-compose &> /dev/null; then
   sudo apt-get install -y docker-compose
 else
   echo "Docker Compose already installed."
+fi
+
+echo "Installing OpenSCAP tools..."
+sudo add-apt-repository -y universe
+sudo apt-get update
+sudo apt-get install -y libopenscap8
+
+echo "Verifying OpenSCAP installation..."
+if ! command -v oscap &> /dev/null && [ ! -x /usr/bin/oscap ] && [ ! -x /usr/sbin/oscap ]; then
+  echo "oscap still not found in PATH. Exiting."
+  exit 1
 fi
 
 echo "Downloading installer and secrets..."
@@ -48,6 +69,7 @@ set +o allexport
 echo "Cleaning up decrypted secrets..."
 shred -u .env.gpg
 shred -u .env
+echo "Secrets cleaned up."
 
 echo "Running installer..."
 chmod +x install.sh
