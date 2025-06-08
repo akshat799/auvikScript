@@ -3,7 +3,6 @@ set -e
 REPO_URL="https://raw.githubusercontent.com/akshat799/auvikScript/main"
 
 echo "Checking Docker installation..."
-
 if ! command -v docker &> /dev/null; then
   echo "Docker not found. Installing..."
   sudo apt-get update
@@ -29,34 +28,6 @@ else
   echo "Docker Compose already installed."
 fi
 
-echo "Checking for OpenSCAP (oscap)..."
-if ! command -v oscap &> /dev/null; then
-  echo "Installing OpenSCAP tools..."
-  sudo apt-get update
-  sudo apt-get install -y software-properties-common
-  sudo add-apt-repository -y universe
-  sudo apt-get update
-
-  sudo apt-get install -y libopenscap8 || {
-    echo "Failed to install libopenscap8. Aborting."
-    exit 1
-  }
-
-  echo "Checking for scap-security-guide..."
-  if ! apt-cache show scap-security-guide &>/dev/null; then
-    echo "scap-security-guide not available. Downloading manually..."
-    mkdir -p /opt/ssg && cd /opt/ssg
-    wget -q https://github.com/ComplianceAsCode/content/releases/latest/download/scap-security-guide.zip
-    unzip -q scap-security-guide.zip
-    echo "scap-security-guide downloaded to /opt/ssg."
-  else
-    sudo apt-get install -y scap-security-guide
-    echo "scap-security-guide installed via package manager."
-  fi
-else
-  echo "OpenSCAP is already installed."
-fi
-
 echo "Downloading installer and secrets..."
 curl -fsSL "$REPO_URL/install.sh" -o install.sh
 curl -fsSL "$REPO_URL/.env.gpg" -o .env.gpg
@@ -67,7 +38,6 @@ if [ -z "$GPG_PASSPHRASE" ]; then
   exit 1
 fi
 echo "Decrypting .env.gpg using GPG_PASSPHRASE..."
-
 gpg --quiet --batch --yes --passphrase "$GPG_PASSPHRASE" --decrypt .env.gpg > .env
 
 echo "Decryption complete. Setting up environment variables..."
