@@ -34,7 +34,12 @@ echo "Checking for OpenSCAP (oscap)..."
 if ! command -v oscap &> /dev/null; then
   echo "Installing OpenSCAP tools..."
   sudo apt-get update
-  sudo apt-get install -y openscap-scanner openscap-utils
+
+  # Ensure universe repo is enabled
+  sudo add-apt-repository -y universe
+  sudo apt-get update
+
+  sudo apt-get install -y libopenscap8 scap-security-guide
 else
   echo "OpenSCAP is already installed."
 fi
@@ -53,8 +58,6 @@ echo "Decrypting .env.gpg using GPG_PASSPHRASE..."
 gpg --quiet --batch --yes --passphrase "$GPG_PASSPHRASE" --decrypt .env.gpg > .env
 
 echo "Decryption complete. Setting up environment variables..."
-
-echo "Exporting environment variables..."
 set -o allexport
 source .env
 set +o allexport
@@ -66,4 +69,5 @@ shred -u .env
 echo "Running installer..."
 chmod +x install.sh
 sudo -E ./install.sh
+
 echo "Installation complete."
