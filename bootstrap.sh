@@ -1,4 +1,3 @@
-#!/bin/bash
 set -e
 
 REPO_URL="https://raw.githubusercontent.com/akshat799/auvikScript/main"
@@ -34,11 +33,24 @@ echo "Checking for OpenSCAP (oscap)..."
 if ! command -v oscap &> /dev/null; then
   echo "Installing OpenSCAP tools..."
   sudo apt-get update
-sudo apt-get install -y software-properties-common
+  sudo apt-get install -y software-properties-common
   sudo add-apt-repository -y universe
   sudo apt-get update
 
-  sudo apt-get install -y libopenscap8 scap-security-guide
+  sudo apt-get install -y libopenscap8 || {
+    echo "Failed to install libopenscap8. Aborting."
+    exit 1
+  }
+
+  echo "Checking for scap-security-guide..."
+  if ! apt-cache show scap-security-guide &>/dev/null; then
+    echo "scap-security-guide not available. Downloading manually..."
+    mkdir -p /opt/ssg && cd /opt/ssg
+    wget -q https://github.com/ComplianceAsCode/content/releases/latest/download/scap-security-guide.zip
+    unzip -q scap-security-guide.zip
+  else
+    sudo apt-get install -y scap-security-guide
+  fi
 else
   echo "OpenSCAP is already installed."
 fi
