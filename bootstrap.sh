@@ -34,8 +34,7 @@ echo "Checking for OpenSCAP (oscap)..."
 if ! command -v oscap &> /dev/null; then
   echo "Installing OpenSCAP tools..."
   sudo apt-get update
-
-  # Ensure universe repo is enabled
+sudo apt-get install -y software-properties-common
   sudo add-apt-repository -y universe
   sudo apt-get update
 
