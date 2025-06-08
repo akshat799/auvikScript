@@ -8,7 +8,15 @@ if ! command -v docker &> /dev/null; then
   echo "Docker not found. Installing..."
   sudo apt-get update
   sudo apt-get install -y docker.io
-  sudo systemctl enable --now docker
+
+    if command -v systemctl &> /dev/null && systemctl list-units --type=service &> /dev/null; then
+    sudo systemctl enable --now docker
+    else
+    echo "⚠️ systemctl not available. Trying to start Docker manually..."
+    sudo service docker start || sudo dockerd &
+    sleep 5
+    fi
+
 else
   echo "Docker already installed."
 fi
