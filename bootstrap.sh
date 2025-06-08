@@ -48,8 +48,11 @@ if [ -z "$GPG_PASSPHRASE" ]; then
   echo "GPG_PASSPHRASE not set. Aborting."
   exit 1
 fi
+echo "Decrypting .env.gpg using GPG_PASSPHRASE..."
 
 gpg --quiet --batch --yes --passphrase "$GPG_PASSPHRASE" --decrypt .env.gpg > .env
+
+echo "Decryption complete. Setting up environment variables..."
 
 echo "Exporting environment variables..."
 set -o allexport
